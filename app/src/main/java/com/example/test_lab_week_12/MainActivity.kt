@@ -5,9 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.test_lab_week_12.viewmodel.MovieViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,17 +47,25 @@ class MainActivity : AppCompatActivity() {
             }
         )[MovieViewModel::class.java]
 
-        movieViewModel.popularMovies.observe(this) { movies ->
+        // Flow collector
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-            // FIX PENTING: Hilangkan filter tahun (penyebab layar putih)
-            movieAdapter.addMovies(
-                movies.sortedByDescending { it.popularity }
-            )
-        }
+                launch {
+                    movieViewModel.popularMovies.collect { movies ->
+                        movieAdapter.addMovies(
+                            movies.sortedByDescending { it.popularity }
+                        )
+                    }
+                }
 
-        movieViewModel.error.observe(this) { error ->
-            if (error.isNotEmpty()) {
-                Snackbar.make(recyclerView, error, Snackbar.LENGTH_LONG).show()
+                launch {
+                    movieViewModel.error.collect { errorMsg ->
+                        if (errorMsg.isNotEmpty()) {
+                            Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).show()
+                        }
+                    }
+                }
             }
         }
     }
