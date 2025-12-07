@@ -2,9 +2,8 @@ package com.example.test_lab_week_12
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.example.test_lab_week_12.databinding.ActivityDetailsBinding
 
 class DetailsActivity : AppCompatActivity() {
 
@@ -13,31 +12,26 @@ class DetailsActivity : AppCompatActivity() {
         const val EXTRA_RELEASE = "release"
         const val EXTRA_OVERVIEW = "overview"
         const val EXTRA_POSTER = "poster"
-        const val IMAGE_URL = "https://image.tmdb.org/t/p/w185/"
     }
+
+    private lateinit var binding: ActivityDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_details)
+        binding = ActivityDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val titleText: TextView = findViewById(R.id.title_text)
-        val releaseText: TextView = findViewById(R.id.release_text)
-        val overviewText: TextView = findViewById(R.id.overview_text)
-        val poster: ImageView = findViewById(R.id.movie_poster)
+        val title = intent.getStringExtra(EXTRA_TITLE)
+        val release = intent.getStringExtra(EXTRA_RELEASE)
+        val overview = intent.getStringExtra(EXTRA_OVERVIEW)
+        val poster = intent.getStringExtra(EXTRA_POSTER)
 
-        val extras = intent.extras
+        binding.movieTitle.text = title
+        binding.movieRelease.text = release
+        binding.movieOverview.text = overview
 
-        titleText.text = extras?.getString(EXTRA_TITLE).orEmpty()
-        releaseText.text = extras?.getString(EXTRA_RELEASE).orEmpty().take(4)
-
-        overviewText.text =
-            getString(R.string.movie_overview, extras?.getString(EXTRA_OVERVIEW).orEmpty())
-
-        val posterPath = extras?.getString(EXTRA_POSTER).orEmpty()
-        Glide.with(this@DetailsActivity)
-            .load("$IMAGE_URL$posterPath")
-            .placeholder(R.mipmap.ic_launcher)
-            .fitCenter()
-            .into(poster)
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w500/$poster")
+            .into(binding.moviePoster)
     }
 }
