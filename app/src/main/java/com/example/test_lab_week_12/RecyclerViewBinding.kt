@@ -5,13 +5,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.test_lab_week_12.model.Movie
 
 @BindingAdapter("list")
-fun bindMovies(view: RecyclerView, movies: List<Movie>?) {
-    val adapter = view.adapter as? MovieAdapter
-    if (adapter == null) {
-        val newAdapter = MovieAdapter()
-        view.adapter = newAdapter
-        newAdapter.addMovies(movies ?: emptyList())
-    } else {
-        adapter.addMovies(movies ?: emptyList())
-    }
+fun bindMovies(recyclerView: RecyclerView, list: List<Movie>?) {
+
+    val adapter = recyclerView.adapter as? MovieAdapter
+        ?: return  // Adapter belum di-set di Activity → jangan crash
+
+    adapter.addMovies(list ?: emptyList())
 }

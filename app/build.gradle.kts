@@ -45,16 +45,10 @@ android {
 
 dependencies {
 
-    // existing libs from catalog
+    // === BASE LIBS ===
     implementation(libs.androidx.recyclerview)
     implementation(libs.glide)
     implementation(libs.retrofit)
-
-    // FIX: Moshi manual dependency (karena converter.moshi TIDAK ADA di libs catalog kamu)
-    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
-    implementation("com.squareup.moshi:moshi:1.15.1")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -69,11 +63,22 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
+    // === MOSHI (FIX DUPLIKAT) ===
+    implementation("com.squareup.moshi:moshi:1.15.1")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
+
+    // === RETROFIT MOSHI CONVERTER ===
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+
+    // === ROOM ===
+    implementation ("androidx.room:room-runtime:2.7.0-alpha02")
+    kapt ("androidx.room:room-compiler:2.7.0-alpha02")
+
+    // === TESTING ===
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+
 
 }

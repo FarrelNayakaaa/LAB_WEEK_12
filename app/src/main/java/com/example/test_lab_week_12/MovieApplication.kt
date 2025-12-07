@@ -1,8 +1,10 @@
 package com.example.test_lab_week_12
 
 import android.app.Application
+import androidx.room.Room
 import com.example.test_lab_week_12.api.MovieService
 import com.example.test_lab_week_12.data.MovieRepository
+import com.example.test_lab_week_12.data.local.MovieDatabase
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -11,16 +13,17 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 class MovieApplication : Application() {
 
     lateinit var movieRepository: MovieRepository
+    private lateinit var database: MovieDatabase
 
     override fun onCreate() {
         super.onCreate()
 
-        // MOSHI WAJIB PAKAI KotlinJsonAdapterFactory
+        // --- 1. Moshi ---
         val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())   // FIX PALING PENTING
+            .add(KotlinJsonAdapterFactory())
             .build()
 
-        // Retrofit dengan Moshi Kotlin
+        // --- 2. Retrofit ---
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.themoviedb.org/3/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -28,6 +31,17 @@ class MovieApplication : Application() {
 
         val movieService = retrofit.create(MovieService::class.java)
 
-        movieRepository = MovieRepository(movieService)
+        // --- 3. Room Database ---
+        database = Room.databaseBuilder(
+            applicationContext,
+            MovieDatabase::class.java,
+            "movies.db"
+        ).build()
+
+        // --- 4. Repository (Retrofit + Room DAO) ---
+        movieRepository = MovieRepository(
+            movieService,
+            database.movieDao()
+        )
     }
 }

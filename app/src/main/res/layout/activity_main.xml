@@ -17,8 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:list="@{viewModel.popularMovies}"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="2"
             tools:listitem="@layout/view_movie_item"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
