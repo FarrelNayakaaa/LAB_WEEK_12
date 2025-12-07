@@ -1,4 +1,4 @@
-Commit No. 2 – Building app with coroutines & Commit No. 2 – Upgrading
-app with flow
+Commit No. 1 – add data binding
 
-<img width="228" height="458" alt="Screenshot 2025-11-30 at 10 27 06 AM" src="https://github.com/user-attachments/assets/24dfd199-9f52-4672-951b-b80d1a8ad5d2" />
+
+<img width="217" height="444" alt="Screenshot 2025-12-08 at 12 56 04 AM" src="https://github.com/user-attachments/assets/ca1cad87-6dda-4e89-94b5-b4d74be5cdae" />
