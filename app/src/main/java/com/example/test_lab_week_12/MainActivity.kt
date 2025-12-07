@@ -3,28 +3,24 @@ package com.example.test_lab_week_12
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.RecyclerView
+import com.example.test_lab_week_12.databinding.ActivityMainBinding
 import com.example.test_lab_week_12.viewmodel.MovieViewModel
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var movieAdapter: MovieAdapter
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var movieViewModel: MovieViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        movieAdapter = MovieAdapter { movie ->
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        // Adapter kosong dulu agar BindingAdapter tidak error
+        binding.movieList.adapter = MovieAdapter { movie ->
             val intent = Intent(this, DetailsActivity::class.java)
             intent.putExtra(DetailsActivity.EXTRA_TITLE, movie.title)
             intent.putExtra(DetailsActivity.EXTRA_RELEASE, movie.releaseDate)
@@ -33,12 +29,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val recyclerView = findViewById<RecyclerView>(R.id.movie_list)
-        recyclerView.adapter = movieAdapter
-
         val movieRepository = (application as MovieApplication).movieRepository
 
-        val movieViewModel = ViewModelProvider(
+        movieViewModel = ViewModelProvider(
             this,
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -47,26 +40,7 @@ class MainActivity : AppCompatActivity() {
             }
         )[MovieViewModel::class.java]
 
-        // Flow collector
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-
-                launch {
-                    movieViewModel.popularMovies.collect { movies ->
-                        movieAdapter.addMovies(
-                            movies.sortedByDescending { it.popularity }
-                        )
-                    }
-                }
-
-                launch {
-                    movieViewModel.error.collect { errorMsg ->
-                        if (errorMsg.isNotEmpty()) {
-                            Snackbar.make(recyclerView, errorMsg, Snackbar.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        }
+        binding.viewModel = movieViewModel
+        binding.lifecycleOwner = this
     }
 }
